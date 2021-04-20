@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# Modified for use in A Cloud Guru Hands-On Labs Environment
+# Creates certificates with lifespan of 10 years
+
 # Script to be used for generating testing certs only for notary-server and notary-signer
 # Will also create a root-ca and intermediate-ca, deleting those keys when finished
 
@@ -68,7 +71,7 @@ subjectAltName = DNS:notary-server, DNS:notaryserver, DNS:localhost, IP:127.0.0.
 subjectKeyIdentifier=hash
 EOL
 
-openssl x509 -req -days 750 -in "notary-server.csr" -sha256 \
+openssl x509 -req -days 3650 -in "notary-server.csr" -sha256 \
         -CA "intermediate-ca.crt" -CAkey "intermediate-ca.key"  -CAcreateserial \
         -out "notary-server.crt" -extfile "notary-server.cnf" -extensions notary_server
 # append the intermediate cert to this one to make it a proper bundle
@@ -91,7 +94,7 @@ subjectAltName = DNS:notary-signer, DNS:notarysigner, DNS:localhost, IP:127.0.0.
 subjectKeyIdentifier=hash
 EOL
 
-openssl x509 -req -days 750 -in "notary-signer.csr" -sha256 \
+openssl x509 -req -days 3650 -in "notary-signer.csr" -sha256 \
         -CA "intermediate-ca.crt" -CAkey "intermediate-ca.key"  -CAcreateserial \
         -out "notary-signer.crt" -extfile "notary-signer.cnf" -extensions notary_signer
 # append the intermediate cert to this one to make it a proper bundle
@@ -114,7 +117,7 @@ subjectAltName = DNS:notary-escrow, DNS:notaryescrow, DNS:localhost, IP:127.0.0.
 subjectKeyIdentifier=hash
 EOL
 
-openssl x509 -req -days 750 -in "notary-escrow.csr" -sha256 \
+openssl x509 -req -days 3650 -in "notary-escrow.csr" -sha256 \
         -CA "intermediate-ca.crt" -CAkey "intermediate-ca.key"  -CAcreateserial \
         -out "notary-escrow.crt" -extfile "notary-escrow.cnf" -extensions notary_escrow
 # append the intermediate cert to this one to make it a proper bundle
@@ -138,7 +141,7 @@ subjectAltName = DNS:secure.example.com, DNS:localhost, IP:127.0.0.1
 subjectKeyIdentifier=hash
 EOL
 
-openssl x509 -req -days 750 -in "secure.example.com.csr" -sha256 \
+openssl x509 -req -days 3650 -in "secure.example.com.csr" -sha256 \
         -CA "intermediate-ca.crt" -CAkey "intermediate-ca.key"  -CAcreateserial \
         -out "secure.example.com.crt" -extfile "secure.example.com.cnf" -extensions secure.example.com
 rm "secure.example.com.cnf" "secure.example.com.csr"
@@ -162,7 +165,7 @@ extendedKeyUsage=codeSigning
 subjectKeyIdentifier=hash
 EOL
 
-        openssl x509 -req -days 750 -in "${selfsigned}.csr" -signkey "${selfsigned}.key" \
+        openssl x509 -req -days 3650 -in "${selfsigned}.csr" -signkey "${selfsigned}.key" \
                 -out "${selfsigned}.crt" -extfile "${selfsigned}.cnf" -extensions selfsigned
 
         rm "${selfsigned}.cnf" "${selfsigned}.csr" "${selfsigned}.key"
@@ -170,7 +173,7 @@ done
 
 # Postgresql keys for testing server/client auth
 
-command -v cfssljson  >/dev/null 2>&1 || { 
+command -v cfssljson  >/dev/null 2>&1 || {
     echo >&2 "Installing cfssl tools"; go get -u github.com/cloudflare/cfssl/cmd/...;
 }
 
